@@ -1,0 +1,8 @@
+{
+  "name": "http-request",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/yoannduc/HTTP-Request.git",
+  "author": "yoannduc <dev.yoannduc@gmail.com>",
+  "license": "MIT"
+}
