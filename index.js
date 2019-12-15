@@ -2,8 +2,6 @@ const http = require('http')
 const https = require('https')
 const { URL } = require('url')
 
-const Joi = require('joi')
-
 /**
  * Put both protocols and default ports in same object as nodejs has two different library for http & https
  * @type {Object}
@@ -13,27 +11,72 @@ const protocols = {
   https: { lib: https, defaultPort: 443 },
 }
 
-/**
- * Joi schema to validate a http request params object
- * @type {Object}
- */
-const httpRequestParamsSchema = Joi.object().keys({
-  url: Joi.string().required(),
-  headers: Joi.object(),
-  method: Joi.string()
-    .uppercase()
-    .valid(['GET', 'POST', 'PUT', 'DELETE']),
-  data: Joi.object(),
-  auth: Joi.string(),
-  agent: Joi.object(),
-  createConnection: Joi.string(),
-  timeout: Joi.number(),
-  ca: Joi.string(),
-  cert: Joi.string(),
-  key: Joi.string(),
-  rejectUnauthorized: Joi.boolean(),
-  returnStream: Joi.boolean(),
-})
+function validateHttpParams(params) {
+  if (!isObject(params)) {
+    throw new Error(`Params mus be an object, ${typeof params} given`)
+  }
+
+  if (typeof params.url !== 'string' || !params.url.length) {
+    throw new Error(`url must be a string, ${typeof params.url} given`)
+  }
+
+  if (!isObject(params.headers)) {
+    throw new Error(`Params mus be an object, ${typeof params.headers} given`)
+  }
+
+  if (
+    typeof params.method !== 'string' ||
+    !['GET', 'POST', 'PUT', 'DELETE'].includes(params.method.toUpperCase())
+  ) {
+    throw new Error(`method must be a string, ${typeof method} given`)
+  }
+
+  if (!isObject(params.data)) {
+    throw new Error(`data mus be an object, ${typeof params.data} given`)
+  }
+
+  if (typeof params.auth !== 'string') {
+    throw new Error(`auth must be a string, ${typeof params.auth} given`)
+  }
+
+  if (!isObject(params.agent)) {
+    throw new Error(`agent mus be an object, ${typeof params.agent} given`)
+  }
+
+  if (typeof params.createConnection !== 'string') {
+    throw new Error(
+      `createConnection must be a string, ${typeof params.createConnection} given`,
+    )
+  }
+
+  if (typeof params.timeout !== 'number') {
+    throw new Error(`timeout must be a number, ${typeof params.timeout} given`)
+  }
+
+  if (typeof params.ca !== 'string') {
+    throw new Error(`ca must be a string, ${typeof params.ca} given`)
+  }
+
+  if (typeof params.cert !== 'string') {
+    throw new Error(`cert must be a string, ${typeof params.cert} given`)
+  }
+
+  if (typeof params.key !== 'string') {
+    throw new Error(`key must be a string, ${typeof params.key} given`)
+  }
+
+  if (typeof params.rejectUnauthorized !== 'boolean') {
+    throw new Error(
+      `rejectUnauthorized must be a boolean, ${typeof params.rejectUnauthorized} given`,
+    )
+  }
+
+  if (typeof params.returnStream !== 'boolean') {
+    throw new Error(
+      `returnStream must be a boolean, ${typeof params.returnStream} given`,
+    )
+  }
+}
 
 /**
  * Custom function to check if some string can be parseInt
@@ -87,12 +130,11 @@ module.exports = requestParams =>
   // Transform return type to promise
   new Promise((resolve, reject) => {
     // Check if input matches the http request params schema
-    const { error: httpRequestParamsError } = Joi.validate(
-      requestParams,
-      httpRequestParamsSchema,
+    const httpRequestParamsError = attempt(() =>
+      validateHttpParams(requestParams),
     )
     // If the validation ended in error, reject the promise with the error message
-    if (httpRequestParamsError) {
+    if (isError(httpRequestParamsError)) {
       return reject(
         new Error(`Error on request params: ${httpRequestParamsError.message}`),
       )
