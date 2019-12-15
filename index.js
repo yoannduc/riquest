@@ -66,10 +66,15 @@ function capitalize(string) {
   })
 }
 
+function isObject(obj) {
+  return !isNil(obj) && !Array.isArray(obj) && typeof obj === 'object'
+}
+
 function removeNilValue(obj) {
-  if (isNil(obj) || Array.isArray(obj) || typeof obj !== 'object') {
+  if (!isObject(obj)) {
     return obj
   }
+
   return Object.fromEntries(Object.entries(obj).filter(a => !isNil(a[1])))
 }
 
