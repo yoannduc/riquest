@@ -20,58 +20,65 @@ function validateHttpParams(params) {
     throw new Error(`url must be a string, ${typeof params.url} given`)
   }
 
-  if (!isObject(params.headers)) {
-    throw new Error(`Params mus be an object, ${typeof params.headers} given`)
+  if (!isNil(params.headers) && !isObject(params.headers)) {
+    throw new Error(`headers mus be an object, ${typeof params.headers} given`)
   }
 
   if (
-    typeof params.method !== 'string' ||
-    !['GET', 'POST', 'PUT', 'DELETE'].includes(params.method.toUpperCase())
+    !isNil(params.method) &&
+    (typeof params.method !== 'string' ||
+      !['GET', 'POST', 'PUT', 'DELETE'].includes(params.method.toUpperCase()))
   ) {
     throw new Error(`method must be a string, ${typeof method} given`)
   }
 
-  if (!isObject(params.data)) {
+  if (!isNil(params.data) && !isObject(params.data)) {
     throw new Error(`data mus be an object, ${typeof params.data} given`)
   }
 
-  if (typeof params.auth !== 'string') {
+  if (!isNil(params.auth) && typeof params.auth !== 'string') {
     throw new Error(`auth must be a string, ${typeof params.auth} given`)
   }
 
-  if (!isObject(params.agent)) {
+  if (!isNil(params.agent) && !isObject(params.agent)) {
     throw new Error(`agent mus be an object, ${typeof params.agent} given`)
   }
 
-  if (typeof params.createConnection !== 'string') {
+  if (
+    !isNil(params.createConnection) &&
+    typeof params.createConnection !== 'string'
+  ) {
     throw new Error(
       `createConnection must be a string, ${typeof params.createConnection} given`,
     )
   }
 
-  if (typeof params.timeout !== 'number') {
+  if (!isNil(params.timeout) && typeof params.timeout !== 'number') {
     throw new Error(`timeout must be a number, ${typeof params.timeout} given`)
   }
 
-  if (typeof params.ca !== 'string') {
+  if (!isNil(params.ca) && typeof params.ca !== 'string') {
     throw new Error(`ca must be a string, ${typeof params.ca} given`)
   }
 
-  if (typeof params.cert !== 'string') {
+  if (!isNil(params.cert) && typeof params.cert !== 'string') {
     throw new Error(`cert must be a string, ${typeof params.cert} given`)
   }
 
-  if (typeof params.key !== 'string') {
+  if (!isNil(params.key) && typeof params.key !== 'string') {
     throw new Error(`key must be a string, ${typeof params.key} given`)
   }
 
-  if (typeof params.rejectUnauthorized !== 'boolean') {
+  if (
+    !isNil(params.rejectUnauthorized) &&
+    typeof params.rejectUnauthorized !== 'boolean'
+  ) {
     throw new Error(
       `rejectUnauthorized must be a boolean, ${typeof params.rejectUnauthorized} given`,
     )
   }
 
-  if (typeof params.returnStream !== 'boolean') {
+  if (!isNil(params.returnStream) && typeof params.returnStream !== 'boolean') {
     throw new Error(
       `returnStream must be a boolean, ${typeof params.returnStream} given`,
     )
@@ -118,7 +125,9 @@ function removeNilValue(obj) {
     return obj
   }
 
-  return Object.fromEntries(Object.entries(obj).filter(a => !isNil(a[1])))
+  return Object.entries(obj)
+    .filter(([_, v]) => !isNil(v))
+    .reduce((acc, [k, v]) => Object.assign({}, acc, { [k]: v }), {})
 }
 
 /**
