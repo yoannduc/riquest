@@ -44,7 +44,7 @@ Performs a http/http request using http/https base node libraries.
 - `params.timeout`: A number of milliseconds before the query returns a timeout error.
 - `params.returnStream`: A boolean controlling whether riquest should return an object or a stream (useful when piping is needed, like for streaming response).
 
-Other params are availible.
+Other params are available.
 
 - `params.auth`
 - `params.agent`
