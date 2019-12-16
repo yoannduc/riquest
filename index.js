@@ -11,6 +11,10 @@ const protocols = {
   https: { lib: https, defaultPort: 443 },
 }
 
+/**
+ * Validates the input object for riquest. Throws if error in params
+ * @param  {Object}  params  The input object made to riquest lib
+ */
 function validateHttpParams(params) {
   if (!isObject(params)) {
     throw new Error(`Params mus be an object, ${typeof params} given`)
@@ -87,21 +91,36 @@ function validateHttpParams(params) {
 
 /**
  * Custom function to check if some string can be parseInt
- * @param  {String}  stringToCheck  The string that we want to check if can be parseInt
- * @return {Boolean}                A boolean telling entered string can be or not parseInt
+ * @param  {String}  stringToCheck  The value we want to check if can be parseInt
+ * @return {Boolean}                A boolean representing value can be parseInt
  */
 function canParseInt(stringToCheck) {
   return !isNaN(parseInt(stringToCheck, 10))
 }
 
+/**
+ * Check if value is null or undefined
+ * @param  {Any}  val   Value to check if nil or not
+ * @return {Boolean}    A boolean representing value is nil
+ */
 function isNil(val) {
   return val === null || typeof val === 'undefined'
 }
 
+/**
+ * Check if value is an error Object
+ * @param  {Any}  e     The value we want to check if is an error
+ * @return {Boolean}    A boolean representing value is error
+ */
 function isError(e) {
   return e && e.stack && e.message
 }
 
+/**
+ * Coonveignant try catch. Will run the function in a try catch. Will return value if ok or error if catched
+ * @param  {Function} func  The function to try/catch
+ * @return {Any|Error}      The return value of the function or the error raised by said function
+ */
 function attempt(func) {
   try {
     return func()
@@ -110,16 +129,31 @@ function attempt(func) {
   }
 }
 
+/**
+ * Capitalize string. Do not mutate original string
+ * @param  {String} string The string to Capitalize
+ * @return {String}        The capitalized string
+ */
 function capitalize(string) {
   string.toLowerCase().replace(/(?:^|\s)\S/g, function(s) {
     return s.toUpperCase()
   })
 }
 
+/**
+ * Check if value is an object (not including arrays, functions & null values)
+ * @param  {Any}  obj   The value to check if is an objectt
+ * @return {Boolean}    A boolean representing the value is an object
+ */
 function isObject(obj) {
   return !isNil(obj) && !Array.isArray(obj) && typeof obj === 'object'
 }
 
+/**
+ * Remove nil values from an object to avoid {key: undefined} situations
+ * @param  {Object} obj The object wrom whiich to remove nil values
+ * @return {Object}     The object without nil values
+ */
 function removeNilValue(obj) {
   if (!isObject(obj)) {
     return obj
@@ -132,8 +166,8 @@ function removeNilValue(obj) {
 
 /**
  * Perform a http request based on entered params
- * @param  {Object} requestParams The http params we want to use for our request
- * @return {Object}               The http response
+ * @param  {Object} requestParams             The http params we want to use for our request
+ * @return {Promise<Object|ReadableStream>}   A promise containing the http response
  */
 module.exports = requestParams =>
   // Transform return type to promise
