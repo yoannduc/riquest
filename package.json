@@ -1,6 +1,6 @@
 {
   "name": "riquest",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "index.js",
   "repository": "https://github.com/yoannduc/riquest.git",
   "author": "yoannduc <dev.yoannduc@gmail.com>",
